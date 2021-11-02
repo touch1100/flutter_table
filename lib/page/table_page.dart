@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_table/models/title_model.dart';
 import 'package:flutter_table/utils/screen/ScreenAdapter.dart';
 import 'package:flutter_table/view/table_widget.dart';
 
@@ -11,20 +12,10 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
-  // List<String> titleList = ['日期','项目','预计完成时间预计完成时间预计完成时间预计完成时间','日期','项目','预计完成时间','日期','项目','预计完成时间','日期','项目','预计完成时间'
-  // ,'日期','项目','预计完成时间','日期','项目','预计完成时间','日期','项目','预计完成时间','日期','项目','预计完成时间'];
-  List<String> titleList = [
-    '日期',
-    '项目',
-    '预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间预计完成时间',
-    '项目',
-    '项目',
-    'test'
+  List<TitleModel> titleList = [TitleModel("序号",hasIcon: false, icon: Icon(Icons.sort,color: Colors.blue,size: 16,)),
+    TitleModel("预计完成时间",hasIcon: true, icon: Icon(Icons.sort,color: Colors.blue,size: 16,)),
+    TitleModel("项目",hasIcon: false),TitleModel("项目",hasIcon: false),TitleModel("项目",hasIcon: false),TitleModel("test",hasIcon: false)
   ];
-
-  // List<String> titleList = ['日期','项目ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-  //   '预计完成时间',
-  //   '项目','项目'];
 
   //列表所有数据
   List<List<String>> allList = [];
@@ -51,8 +42,8 @@ class _TablePageState extends State<TablePage> {
       count++;
       List<String> contentList = [];
       if (i % 2 == 0) {
-        contentList.add("202学习烦烦烦烦反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦$count");
-        contentList.add("学习烦烦烦烦反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦$count");
+        contentList.add("$count");
+        contentList.add("学习烦烦烦烦反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦发发发发发发付付付付付付付付付付付付付付付付付付付付付$count");
         // contentList.add("202103$i");
         contentList.add("反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦反反复复烦烦烦$count");
         // contentList.add("学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332$i");
@@ -60,7 +51,7 @@ class _TablePageState extends State<TablePage> {
         contentList.add("202103$count");
         contentList.add("test$count");
       } else {
-        contentList.add("202学习$count");
+        contentList.add("$count");
         contentList.add("学习烦$count");
         // contentList.add("202103$i");
         contentList.add("反反复复$count");
@@ -119,7 +110,7 @@ class _TablePageState extends State<TablePage> {
     ScreenAdapter.init(context);
     // titleWidthMap = {0:100,1:250,2:400,5:30};//问题：得四个才可以滑动
     titleWidthMap = {
-      0: ScreenAdapter.getScreenWith() / 4,
+      0: ScreenAdapter.getScreenWith() / 6,
       1: ScreenAdapter.getScreenWith() / 3,
       2: ScreenAdapter.getScreenWith() / 3,
       3: ScreenAdapter.getScreenWith() / 5,
@@ -146,9 +137,8 @@ class _TablePageState extends State<TablePage> {
             titleTextOverflow: TextOverflow.ellipsis,
             onTap: (x, y) {
               //如果是标题行， y = null.
-              _getSelectList(x: x, y: y);
-              // _addContentList(_getContentList());
-              // print("外部  x=$x y=$y");
+              // _getSelectList(x: x, y: y);
+              print("外部  x=$x y=$y");
             }),
       ),
     );

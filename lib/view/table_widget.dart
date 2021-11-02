@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_table/models/title_model.dart';
 import 'package:flutter_table/utils/screen/ScreenAdapter.dart';
 
 ///注：每一列的最大宽度是屏幕宽度的1/2(自适应情况下）
@@ -7,7 +9,8 @@ class TableWidget extends StatefulWidget {
   double rowWidth; //单个表宽
   double rowHeight; //表格高
 
-  List<String> titleList = []; //标题  ["职责", "工作内容", "年度目标", "关联部门", "备注", "1"];
+  List<TitleModel> titleList =
+      []; //标题  ["职责", "工作内容", "年度目标", "关联部门", "备注", "1"];
   List<List<String>> contentList = []; //内容列表
   List<String> selectList = []; //选中列表  ["0,1","1,2"]
   Map<int, double> titleWidthMap = Map(); //设置标题宽度 {0:100,1:50,2:200,5:30};
@@ -156,7 +159,7 @@ class _TableState extends State<TableWidget> {
   List<TableRow> _buildTableRow() {
     List<TableRow> returnList = [];
     for (int j = 0; j < rightList.length; j++) {
-      returnList.add(_buildSingleRow(j, rightList[j], false)); //添加行
+      returnList.add(_buildSingleRow(j, false, textList: rightList[j])); //添加行
     }
     return returnList;
   }
@@ -165,7 +168,8 @@ class _TableState extends State<TableWidget> {
   List<TableRow> _buildTableOneRow() {
     List<TableRow> returnList = [];
     for (int j = 0; j < 1; j++) {
-      returnList.add(_buildSingleRow(j, widget.titleList, true)); //添加行
+      returnList
+          .add(_buildSingleRow(j, true, titleList: widget.titleList)); //添加行
     }
     return returnList;
   }
@@ -180,13 +184,15 @@ class _TableState extends State<TableWidget> {
   }
 
   //创建一行tableRow
-  TableRow _buildSingleRow(int index, List<String> textList, bool isTitle) {
+  TableRow _buildSingleRow(int index, bool isTitle,
+      {List<TitleModel> titleList, List<String> textList}) {
     return TableRow(children: [
       for (int i = 0;
-          i < (isTitle ? textList.length - 1 : textList.length);
+          i < (isTitle ? titleList.length - 1 : textList.length);
           i++)
         isTitle
-            ? _buildSideBox(i, textList[i + 1], true)
+            ? _buildSideBox(i, titleList[i + 1].title, true,
+                hasIcon: titleList[i + 1].hasIcon, icon: titleList[i + 1].icon)
             : _buildSideBox(i, textList[i], false,
                 xx: index,
                 isSelect: widget.selectList != null
@@ -197,7 +203,11 @@ class _TableState extends State<TableWidget> {
 
   //创建单个表格
   Widget _buildSideBox(int index, String title, bool isTitle,
-      {bool isLeftFirst = false, int xx, bool isSelect = false}) {
+      {bool isLeftFirst = false,
+      int xx,
+      bool isSelect = false,
+      bool hasIcon = false,
+      Icon icon}) {
     // print("_contentRowHeightList ${_contentRowHeightList.length}");
     return Container(
       color: isTitle
@@ -221,7 +231,7 @@ class _TableState extends State<TableWidget> {
                         : _contentRowHeightList[xx])), //widget.rowHeight
             //widget.rowHeight
             child: Container(
-              padding: EdgeInsets.all(0),
+              padding: EdgeInsets.only(left: 5, right: 5),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   border: Border(
@@ -230,33 +240,54 @@ class _TableState extends State<TableWidget> {
                 right: BorderSide(width: 0.33, color: widget.borderColor),
                 left: BorderSide(width: 0.33, color: widget.borderColor),
               )),
-              child: Text(
-                title,
-                maxLines:
-                    isTitle ? widget.titleMaxLines : widget.contentMaxLines,
-                overflow: isTitle
-                    ? widget.titleTextOverflow
-                    : widget.contentTextOverflow,
-                style: TextStyle(
-                    fontSize: isTitle
-                        ? widget.titleFontSize
-                        : (isLeftFirst
-                            ? isSelect
-                                ? widget.selectFontSize
-                                : widget.leftFirstFontSize
-                            : isSelect
-                                ? widget.selectFontSize
-                                : widget.contentFontSize),
-                    color: isTitle
-                        ? widget.titleTextColor
-                        : (isLeftFirst
-                            ? isSelect
-                                ? widget.selectTextColor
-                                : widget.leftFirstTextColor
-                            : isSelect
-                                ? widget.selectTextColor
-                                : widget.contentTextColor)),
-              ),
+              child: isTitle && hasIcon
+                  ? ListView(
+                      shrinkWrap: true,
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            title,
+                            maxLines: widget.titleMaxLines,
+                            overflow: widget.titleTextOverflow,
+                            style: TextStyle(
+                                fontSize: widget.titleFontSize,
+                                color: widget.titleTextColor),
+                          ),
+                        ),
+                        icon
+                      ],
+                    )
+                  : Text(
+                      title,
+                      maxLines: isTitle
+                          ? widget.titleMaxLines
+                          : widget.contentMaxLines,
+                      overflow: isTitle
+                          ? widget.titleTextOverflow
+                          : widget.contentTextOverflow,
+                      style: TextStyle(
+                          fontSize: isTitle
+                              ? widget.titleFontSize
+                              : (isLeftFirst
+                                  ? isSelect
+                                      ? widget.selectFontSize
+                                      : widget.leftFirstFontSize
+                                  : isSelect
+                                      ? widget.selectFontSize
+                                      : widget.contentFontSize),
+                          color: isTitle
+                              ? widget.titleTextColor
+                              : (isLeftFirst
+                                  ? isSelect
+                                      ? widget.selectTextColor
+                                      : widget.leftFirstTextColor
+                                  : isSelect
+                                      ? widget.selectTextColor
+                                      : widget.contentTextColor)),
+                    ),
             )),
         onTap: () {
           if (widget.onTap != null) {
@@ -272,7 +303,10 @@ class _TableState extends State<TableWidget> {
               x = index + 1;
               // print("&&x=$x y=$y");
             }
-            widget.onTap(x, y);
+            if(y == null && hasIcon){ //点击标题并且标题有图标按钮
+              widget.onTap(x, y);
+            }
+
           }
         },
       ),
@@ -353,7 +387,7 @@ class _TableState extends State<TableWidget> {
   void columnWidthAdaptation() {
     //获取文本大小
     _firstColumnTextSize = _getTextSize(
-        widget.titleList[0],
+        widget.titleList[0].title,
         TextStyle(
             color: widget.titleTextColor, fontSize: widget.titleFontSize));
 
@@ -382,7 +416,7 @@ class _TableState extends State<TableWidget> {
         if (!widget.titleWidthMap.containsKey(i)) {
           //获取文本大小
           _rightColumnTextSize = _getTextSize(
-              widget.titleList[i],
+              widget.titleList[i].title,
               TextStyle(
                   color: widget.titleTextColor,
                   fontSize: widget.titleFontSize));
@@ -430,7 +464,7 @@ class _TableState extends State<TableWidget> {
       for (int i = 1; i < widget.titleList.length; i++) {
         //获取文本大小
         _rightColumnTextSize = _getTextSize(
-            widget.titleList[i],
+            widget.titleList[i].title,
             TextStyle(
                 color: widget.titleTextColor, fontSize: widget.titleFontSize));
 
@@ -477,13 +511,13 @@ class _TableState extends State<TableWidget> {
       // print("${widget.titleList[i]}");
       //获取文本大小
       _rightColumnTextSize = _getTextSize(
-          widget.titleList[i],
+          widget.titleList[i].title,
           TextStyle(
               color: widget.titleTextColor, fontSize: widget.titleFontSize));
       // print("标题不限制高度：${widget.titleRowHeight}");
       if (_rightColumnTextSize.width >= ScreenAdapter.getScreenWith() / 2) {
         _rightColumnTextSize = _getTextSize(
-            widget.titleList[i],
+            widget.titleList[i].title,
             TextStyle(
                 color: widget.titleTextColor, fontSize: widget.titleFontSize),
             textMaxWidth: ScreenAdapter.getScreenWith() / 2,
@@ -591,20 +625,32 @@ class _TableState extends State<TableWidget> {
                                   ),
                                 ),
                                 child: Container(
+                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  alignment: Alignment.center,
                                   height: widget.titleRowHeight - 0.66,
                                   //widget.rowHeight - 0.33
                                   color: widget.titleBackgroundColor,
                                   // padding: EdgeInsets.all(10),
-                                  child: Center(
-                                    child: Text(
-                                      widget.titleList[0],
-                                      textAlign: TextAlign.center,
-                                      maxLines: widget.titleMaxLines,
-                                      overflow: widget.titleTextOverflow,
-                                      style: TextStyle(
-                                          color: widget.titleTextColor,
-                                          fontSize: widget.titleFontSize),
-                                    ),
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          widget.titleList[0].title,
+                                          textAlign: TextAlign.center,
+                                          maxLines: widget.titleMaxLines,
+                                          overflow: widget.titleTextOverflow,
+                                          style: TextStyle(
+                                              color: widget.titleTextColor,
+                                              fontSize: widget.titleFontSize),
+                                        ),
+                                      ),
+                                      Container(
+                                        child:widget.titleList[0].hasIcon? widget.titleList[0].icon:Container(),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
