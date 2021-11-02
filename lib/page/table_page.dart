@@ -12,9 +12,25 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
-  List<TitleModel> titleList = [TitleModel("序号",hasIcon: false, icon: Icon(Icons.sort,color: Colors.blue,size: 16,)),
-    TitleModel("预计完成时间",hasIcon: true, icon: Icon(Icons.sort,color: Colors.blue,size: 16,)),
-    TitleModel("项目",hasIcon: false),TitleModel("项目",hasIcon: false),TitleModel("项目",hasIcon: false),TitleModel("test",hasIcon: false)
+  List<TitleModel> titleList = [
+    TitleModel("序号",
+        hasIcon: true,
+        icon: Icon(
+          Icons.sort,
+          color: Colors.blue,
+          size: 16,
+        )),
+    TitleModel("预计完成时间",
+        hasIcon: true,
+        icon: Icon(
+          Icons.sort,
+          color: Colors.blue,
+          size: 16,
+        )),
+    TitleModel("项目", hasIcon: false),
+    TitleModel("项目", hasIcon: false),
+    TitleModel("项目", hasIcon: false),
+    TitleModel("test", hasIcon: false)
   ];
 
   //列表所有数据
@@ -43,19 +59,16 @@ class _TablePageState extends State<TablePage> {
       List<String> contentList = [];
       if (i % 2 == 0) {
         contentList.add("$count");
-        contentList.add("学习烦烦烦烦反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦发发发发发发付付付付付付付付付付付付付付付付付付付付付$count");
-        // contentList.add("202103$i");
+        contentList
+            .add("学习烦烦烦烦反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦发发发发发发付付付付付付付付付付付付付付付付付付付付付$count");
         contentList.add("反反复复烦烦烦烦烦烦烦烦烦烦烦烦烦烦烦反反复复烦烦烦$count");
-        // contentList.add("学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332$i");
-        contentList.add("202103$count");
+        contentList.add("");
         contentList.add("202103$count");
         contentList.add("test$count");
       } else {
         contentList.add("$count");
         contentList.add("学习烦$count");
-        // contentList.add("202103$i");
         contentList.add("反反复复$count");
-        // contentList.add("学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332学习2222222255555555555555553333333332$i");
         contentList.add("202103$count");
         contentList.add("202103$count");
         contentList.add("test$count");
@@ -139,6 +152,20 @@ class _TablePageState extends State<TablePage> {
               //如果是标题行， y = null.
               // _getSelectList(x: x, y: y);
               print("外部  x=$x y=$y");
+              for (int i = 0; i < titleList.length; i++) {
+                if (i == x) {
+                  setState(() {
+                    if(titleList[i].status == 0){
+                      titleList[i].icon =  Icon(Icons.sort, color: Colors.red, size: 16);
+                      titleList[i].status = 1;
+                    }else{
+                      titleList[i].icon =  Icon(Icons.sort, color: Colors.blue, size: 16);
+                      titleList[i].status = 0;
+                    }
+
+                  });
+                }
+              }
             }),
       ),
     );
